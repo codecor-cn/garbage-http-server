@@ -1,13 +1,14 @@
 <?php
+
 //终端shell通信
-$STDIN = fopen('php://stdin', 'r');
-$STDOUT = fopen('php://stdout', 'w');
+//STDIN = fopen('php://stdin', 'r');
+//STDOUT = fopen('php://stdout', 'w');
 
 function child_return(){
     $return_num = 0;
     $pid = pcntl_wait($return_num);
 
-    fwrite($STDOUT, '子进程:'.(string)$pid.'退出;返回值:'.(string)$return_num."\n");
+    fwrite(STDOUT, '子进程:'.(string)$pid.'退出;返回值:'.(string)$return_num."\n");
 }
 
 function main (){
@@ -16,12 +17,12 @@ function main (){
 
     /*绑定接收的套接流主机和端口,与客户端相对应*/
     if(socket_bind($socket,'[::]', 404) == false){
-        fwrite($STDOUT, '绑定地址端口失败:'.socket_strerror(socket_last_error())."\n");
+        fwrite(STDOUT, '绑定地址端口失败:'.socket_strerror(socket_last_error())."\n");
         return 1;
     }
     //监听套接流--等待队列8
     if(socket_listen($socket, 8)==false){
-        fwrite($STDOUT, '监听管道失败:'.socket_strerror(socket_last_error())."\n");
+        fwrite(STDOUT, '监听管道失败:'.socket_strerror(socket_last_error())."\n");
         return 2;
     }
     //注册子进程退出信号
@@ -43,9 +44,9 @@ function main (){
                     $message .= $message;
                 }
                 if($message === false) {
-                    fwrite($STDOUT, '链接中断:'.socket_strerror(socket_last_error())."\n");
+                    fwrite(STDOUT, '链接中断:'.socket_strerror(socket_last_error())."\n");
                 }else{
-                    fwrite($STDOUT, '客户端发送数据:'."\n".$message."\n");
+                    fwrite(STDOUT, '客户端发送数据:'."\n".$message."\n");
                     /*socket_write的作用是向socket_create的套接流写入信息，或者向socket_accept的套接流写入信息*/
                     $return_client = '服务器收到消息为: '.$message."\n";
                     socket_write($accept_resource,$return_client,strlen($return_client));
@@ -60,7 +61,7 @@ function main (){
                 }
             } else {
                 //主进程继续监听端口
-                fwrite($STDOUT, '生成子进程:'.(string)$pid."\n");
+                fwrite(STDOUT, '生成子进程:'.(string)$pid."\n");
             }
         }
     }while(true);
