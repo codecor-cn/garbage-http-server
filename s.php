@@ -6,6 +6,8 @@ function child_return(){
 
     fwrite(STDOUT, '子进程:'.(string)$pid.'退出;返回值:'.(string)$return_num."\n");
 }
+//注册子进程退出信号
+pcntl_signal(SIGCHLD, 'child_return');
 
 function main (){
     //创建服务端的socket套接流,net协议为IPv4，protocol协议为TCP
@@ -21,8 +23,6 @@ function main (){
         fwrite(STDOUT, '监听管道失败:'.socket_strerror(socket_last_error())."\n");
         return 2;
     }
-    //注册子进程退出信号
-    pcntl_signal(SIGCHLD, 'child_return');
 
     //让服务器无限获取客户端传过来的信息
     do{
