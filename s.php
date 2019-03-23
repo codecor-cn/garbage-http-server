@@ -16,7 +16,7 @@ function main (){
     $socket = socket_create(AF_INET6,SOCK_STREAM,SOL_TCP);
 
     /*绑定接收的套接流主机和端口,与客户端相对应*/
-    if(socket_bind($socket,'[::]', 404) == false){
+    if(socket_bind($socket,'::', 404) == false){
         fwrite(STDOUT, '绑定地址端口失败:'.socket_strerror(socket_last_error())."\n");
         return 1;
     }
@@ -30,6 +30,7 @@ function main (){
 
     //让服务器无限获取客户端传过来的信息
     do{
+        fwrite(STDOUT, '等待客户端连接:'."\n");
         /*接收客户端传过来的信息*/
         $accept_resource = socket_accept($socket);
         /*socket_accept的作用就是接受socket_bind()所绑定的主机发过来的套接流*/
@@ -41,6 +42,7 @@ function main (){
                 //读取客户端传过来的套接流信息--每次读取1024字节数据--直到换行回车字符串结束读完
                 $message = '';
                 while($message = socket_read($accept_resource,1024)){
+                    fwrite(STDOUT, '数据循环'.$message."\n");
                     $message .= $message;
                 }
                 if($message === false) {
@@ -60,7 +62,8 @@ function main (){
                     }
                 }
             } else {
-                //主进程继续监听端口
+                //主进程关闭TCP流
+                socket_close($accept_resource);
                 fwrite(STDOUT, '生成子进程:'.(string)$pid."\n");
             }
         }

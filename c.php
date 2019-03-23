@@ -15,7 +15,7 @@ function main (){
     /****************设置socket连接选项，这两个步骤你可以省略*************/
 
     //连接服务端的套接流，这一步就是使客户端与服务器端的套接流建立联系
-    if(socket_connect($socket,'[::1]', 404) == false){
+    if(socket_connect($socket,'::1', 404) == false){
         fwrite(STDOUT, '链接失败:'.socket_strerror(socket_last_error())."\n");
         return 1;
     }else{
@@ -35,6 +35,7 @@ function main (){
             }else{
                 fwrite(STDOUT, '发送数据成功:'."\n");
                 //读取服务端返回来的套接流信息--每次读取1024字节数据--直到换行回车字符串结束读完
+                fwrite(STDOUT, '等待服务器返回数据:'."\n");
                 $callback = '';
                 while($callback = socket_read($socket,1024)){
                     $callback .= $callback;
