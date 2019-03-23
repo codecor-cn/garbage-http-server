@@ -1,7 +1,8 @@
 <?php
 
 //注册子进程退出信号
-pcntl_signal(SIGCHLD, 'child_return');
+//pcntl_signal(SIGCHLD, 'child_return');
+pcntl_signal(SIGCHLD, SIG_IGN);
 
 function child_return(){
     var_dump(111111111);
