@@ -26,7 +26,7 @@ function main (){
 
     //让服务器无限获取客户端传过来的信息
     do{
-        fwrite(STDOUT, '等待客户端连接:'."\n");
+        fwrite(STDOUT, '等待客户端连接;'."\n");
         /*接收客户端传过来的信息*/
         $accept_resource = socket_accept($socket);
         /*socket_accept的作用就是接受socket_bind()所绑定的主机发过来的套接流*/
@@ -48,7 +48,8 @@ function main (){
                             //跳出读状态
                             break;
                         }else{
-                            fwrite(STDOUT, '数据循环'.var_export($one_com, true).';数据长度:'.strlen($one_com)."\n");
+                            fwrite(STDOUT, '数据:'."\n");
+                            fwrite(STDOUT, var_export($one_com, true).';数据长度:'.strlen($one_com)."\n");
                             $message .= $one_com;
                         }
                     }
@@ -74,6 +75,8 @@ function main (){
                 }
                 //子进程关闭TCP流
                 socket_close($accept_resource);
+                //退出通讯
+                break;
             } else {
                 //主进程关闭TCP流
                 socket_close($accept_resource);
