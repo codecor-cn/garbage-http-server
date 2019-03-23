@@ -1,8 +1,8 @@
 <?php
 
 //终端shell通信
-$STDIN = fopen('php://stdin');
-$STDOUT = fopen('php://stdout');
+$STDIN = fopen('php://stdin', 'r');
+$STDOUT = fopen('php://stdout', 'w');
 
 function main (){
     //创建一个socket套接流
