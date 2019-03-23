@@ -36,9 +36,11 @@ function main (){
             if($pid == 0) {
                 //子进程处理管道流
                 for(;;) {
+                    fwrite(STDOUT, '客户端通讯建立完成;'."\n");
                     $message = '';
                     //读取客户端传过来的套接流信息--4k或\n或\r或\0返回数据
                     for(;;) {
+                        fwrite(STDOUT, '读取客户端数据;'."\n");
                         $one_com = socket_read($accept_resource,4096);
 
                         if($one_com === false) {
@@ -47,9 +49,11 @@ function main (){
                         }else if(stripos($one_com, '通讯完毕') !== false) {
                             //跳出读状态
                             break;
+                        }else if($one_com === '') {
+                            fwrite(STDOUT, '客户端关闭通讯;'."\n");
+                            break;
                         }else{
-                            fwrite(STDOUT, '数据:'."\n");
-                            fwrite(STDOUT, var_export($one_com, true).';数据长度:'.strlen($one_com)."\n");
+                            fwrite(STDOUT, var_export($one_com, true).';'.strlen($one_com)."\n");
                             $message .= $one_com;
                         }
                     }
