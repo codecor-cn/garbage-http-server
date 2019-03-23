@@ -1,13 +1,15 @@
 <?php
 
+//注册子进程退出信号
+pcntl_signal(SIGCHLD, 'child_return');
+
 function child_return(){
+    var_dump(111111111);
     $return_num = 0;
     $pid = pcntl_wait($return_num);
 
     fwrite(STDOUT, '子进程:'.(string)$pid.'退出;返回值:'.(string)$return_num."\n");
 }
-//注册子进程退出信号
-pcntl_signal(SIGCHLD, 'child_return');
 
 function main (){
     //创建服务端的socket套接流,net协议为IPv4，protocol协议为TCP
