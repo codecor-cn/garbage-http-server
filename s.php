@@ -35,8 +35,8 @@ function main (){
             $pid = pcntl_fork();
             if($pid == 0) {
                 //子进程处理管道流
+                fwrite(STDOUT, '客户端通讯建立完成;'."\n");
                 for(;;) {
-                    fwrite(STDOUT, '客户端通讯建立完成;'."\n");
                     $message = '';
                     //读取客户端传过来的套接流信息--4k或\n或\r或\0返回数据
                     for(;;) {
