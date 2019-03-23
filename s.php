@@ -39,8 +39,12 @@ function main (){
             $pid = pcntl_fork();
             if($pid == 0) {
 
-                //读取客户端传过来的套接流信息--每次读取1024字节数据--直到换行回车字符串结束读完
                 $message = '';
+                for(;;) {
+                    //读取客户端传过来的套接流信息--4k或\n或\r或\0返回数据--返回值存在\0
+                    $message = socket_read($accept_resource,4096);
+                    var_dump($message);
+                }
                 while($message = socket_read($accept_resource,1024)){
                     fwrite(STDOUT, '数据循环'.$message."\n");
                     $message .= $message;
