@@ -15,7 +15,7 @@ function main (){
         fwrite(STDOUT, '链接失败:'.socket_strerror(socket_last_error())."\n");
         return 1;
     }else{
-        fwrite(STDOUT, '请输入需要发送的数据,结束请输入:关闭通讯;数据输入完毕请输入:通讯完毕'."\n");
+        fwrite(STDOUT, '请输入需要发送的数据,结束请输入:关闭通讯;数据输入完毕请输入:通讯完毕;'."\n");
         //开始通讯
         for(;;){
             //获取终端用户输入--存在\n或\r或\0返回数据
@@ -23,12 +23,12 @@ function main (){
             //清除结尾换行符
             //$message = rtrim($message);
             if(stripos($message, '关闭通讯') !== false) {
-                fwrite(STDOUT, '用户关闭通讯'."\n");
+                fwrite(STDOUT, '用户关闭通讯;'."\n");
                 break;
             }
 
             //向服务端写入字符串信息
-            $com_ret = socket_write($socket,$message,strlen($message))
+            $com_ret = socket_write($socket,$message,strlen($message));
             if($com_ret == false){
                 fwrite(STDOUT, '发送数据失败:'.socket_strerror(socket_last_error())."\n");
                 return 2;
@@ -39,8 +39,8 @@ function main (){
                     continue;
                 }
 
-                fwrite(STDOUT, '发送数据成功:'."\n");
-                fwrite(STDOUT, '等待服务器返回数据:'."\n");
+                fwrite(STDOUT, '发送数据成功;'."\n");
+                fwrite(STDOUT, '等待服务器返回数据;'."\n");
 
                 for(;;) {
                     //读取服务端返回来的套接流信息--每次读取1024字节数据--直到换行回车字符串结束读完

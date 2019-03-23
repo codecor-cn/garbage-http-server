@@ -39,20 +39,20 @@ function main (){
                     $message = '';
                     //读取客户端传过来的套接流信息--4k或\n或\r或\0返回数据
                     for(;;) {
-                        $message = socket_read($accept_resource,4096);
+                        $one_com = socket_read($accept_resource,4096);
 
-                        if($message === false) {
+                        if($one_com === false) {
                             fwrite(STDOUT, '链接中断:'.socket_strerror(socket_last_error())."\n");
                             break;
-                        }else if(stripos($message, '通讯完毕') !== false) {
+                        }else if(stripos($one_com, '通讯完毕') !== false) {
                             //跳出读状态
                             break;
                         }else{
-                            fwrite(STDOUT, '数据循环'.$message.';数据长度:'.strlen($message)."\n");
-                            $message .= $message;
+                            fwrite(STDOUT, '数据循环'.var_export($one_com, true).';数据长度:'.strlen($one_com)."\n");
+                            $message .= $one_com;
                         }
                     }
-                    if($message === false) {
+                    if(empty($message)) {
                         break;
                     } else {
                         fwrite(STDOUT, '接收到的客户端数据:'."\n".$message."\n");
