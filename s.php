@@ -1,9 +1,5 @@
 <?php
 
-//终端shell通信
-//STDIN = fopen('php://stdin', 'r');
-//STDOUT = fopen('php://stdout', 'w');
-
 function child_return(){
     $return_num = 0;
     $pid = pcntl_wait($return_num);
@@ -38,33 +34,46 @@ function main (){
         if($accept_resource !== false){
             $pid = pcntl_fork();
             if($pid == 0) {
-
-                $message = '';
+                //子进程处理管道流
                 for(;;) {
-                    //读取客户端传过来的套接流信息--4k或\n或\r或\0返回数据--返回值存在\0
-                    $message = socket_read($accept_resource,4096);
-                    var_dump($message);
-                }
-                while($message = socket_read($accept_resource,1024)){
-                    fwrite(STDOUT, '数据循环'.$message."\n");
-                    $message .= $message;
-                }
-                if($message === false) {
-                    fwrite(STDOUT, '链接中断:'.socket_strerror(socket_last_error())."\n");
-                }else{
-                    fwrite(STDOUT, '客户端发送数据:'."\n".$message."\n");
-                    /*socket_write的作用是向socket_create的套接流写入信息，或者向socket_accept的套接流写入信息*/
-                    $return_client = '服务器收到消息为: '.$message."\n";
-                    socket_write($accept_resource,$return_client,strlen($return_client));
+                    $message = '';
+                    //读取客户端传过来的套接流信息--4k或\n或\r或\0返回数据
+                    for(;;) {
+                        $message = socket_read($accept_resource,4096);
 
-                    if(stripos($message, '关闭') !== false) {
-                        $close_connect = '关闭通信';
-                        socket_write($accept_resource,$close_connect,strlen($close_connect));
-                        //socket_close的作用是关闭socket_create()或者socket_accept()所建立的套接流
-                        socket_close($accept_resource);
+                        if($message === false) {
+                            fwrite(STDOUT, '链接中断:'.socket_strerror(socket_last_error())."\n");
+                            break;
+                        }else if(stripos($message, '通讯完毕') !== false) {
+                            //跳出读状态
+                            break;
+                        }else{
+                            fwrite(STDOUT, '数据循环'.$message.';数据长度:'.strlen($message)."\n");
+                            $message .= $message;
+                        }
+                    }
+                    if($message === false) {
                         break;
+                    } else {
+                        fwrite(STDOUT, '接收到的客户端数据:'."\n".$message."\n");
+                        //服务端自定义信息---http服务不需要自定义
+                        //获取终端用户输入--存在\n或\r或\0返回数据
+                        /*fwrite(STDOUT, '请输入需要发送的数据'."\n");
+                        $message = fgets(STDIN);
+                        if(stripos($message, '关闭通信') !== false) {
+                            $close_connect = '关闭通信';
+                            socket_write($accept_resource,$close_connect,strlen($close_connect));
+                            //socket_close的作用是关闭socket_create()或者socket_accept()所建立的套接流
+                            socket_close($accept_resource);
+                            break;
+                        }*/
+                        /*socket_write的作用是向socket_create的套接流写入信息，或者向socket_accept的套接流写入信息*/
+                        $return_client = '服务器收到消息为: '.$message."\n";
+                        socket_write($accept_resource,$return_client,strlen($return_client));
                     }
                 }
+                //子进程关闭TCP流
+                socket_close($accept_resource);
             } else {
                 //主进程关闭TCP流
                 socket_close($accept_resource);
@@ -72,7 +81,7 @@ function main (){
             }
         }
     }while(true);
-
+    //关闭端口监听
     socket_close($socket);
 
     return 0;
