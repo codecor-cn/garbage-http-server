@@ -1,9 +1,9 @@
 <?php
 
 //注册子进程退出信号
-//pcntl_signal(SIGCHLD, 'child_return');
 pcntl_signal(SIGCHLD, SIG_IGN);
 
+//mmp无法收尸
 function child_return(){
     var_dump(111111111);
     $return_num = 0;
