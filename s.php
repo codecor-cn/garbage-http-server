@@ -86,6 +86,7 @@ function main (){
     return 0;
 }
 
+//https://blog.csdn.net/zhang197093/article/details/77527035
 //注册子进程退出信号--垃圾php脚本信号机制不完整
 declare(ticks = 1);
 pcntl_signal(SIGCHLD, function($signo) {
