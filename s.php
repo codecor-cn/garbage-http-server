@@ -1,16 +1,5 @@
 <?php
 
-//注册子进程退出信号
-pcntl_signal(SIGCHLD, SIG_IGN);
-
-//mmp无法收尸
-function child_return(){
-    var_dump(111111111);
-    $return_num = 0;
-    $pid = pcntl_wait($return_num);
-
-    fwrite(STDOUT, '子进程:'.(string)$pid.'退出;返回值:'.(string)$return_num."\n");
-}
 
 function main (){
     //创建服务端的socket套接流,net协议为IPv4，protocol协议为TCP
@@ -97,6 +86,16 @@ function main (){
     return 0;
 }
 
+//注册子进程退出信号--垃圾php脚本信号机制不完整
+declare(ticks = 1);
+pcntl_signal(SIGCHLD, function($signo) {
+    $return_num = 0;
+    $pid = pcntl_wait($return_num);
+
+    fwrite(STDOUT, '收到信号:'.(string)$signo.'子进程:'.(string)$pid.'退出;返回值:'.(string)$return_num."\n");
+});
+
 
 
 return main();
+
